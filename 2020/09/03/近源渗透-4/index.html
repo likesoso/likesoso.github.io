@@ -30,16 +30,13 @@
     </div>
     <div class="post-content">
         <p>&nbsp;&nbsp;&nbsp;&nbsp;到这一章，我们的基础学习就已经结束了，学到了一些802.11的原理知识,以及kali下的基础操作。接下来进入正题。不难发现之前的操作，只能做一些拒绝服务攻击，或者是靠字典的强大，爆破出wifi密码，从而连接到目标网络内。接下来记录一下我的wifi钓鱼学习笔记。</p>
-<p>##安装环境</p>
-<p>一个支持AP模式的无线网卡，这里我推荐TP-LINK的TL-WN722N Ver1.0，咸鱼30rmb购得。推荐ver1版本的，ver2的kali没得自带的驱动。</p>
+<h2 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h2><p>一个支持AP模式的无线网卡，这里我推荐TP-LINK的TL-WN722N Ver1.0，咸鱼30rmb购得。推荐ver1版本的，ver2的kali没得自带的驱动。</p>
 <p><img src="/2020/09/03/%E8%BF%91%E6%BA%90%E6%B8%97%E9%80%8F-4/4-1.jpg" alt="4-1.jpg"></p>
 <p><strong>安装hostapd、dnsmasq、php等</strong></p>
-<p>###hostpad</p>
-<p>实现了热点的建立，管理等功能</p>
+<h3 id="hostpad"><a href="#hostpad" class="headerlink" title="hostpad"></a>hostpad</h3><p>实现了热点的建立，管理等功能</p>
 <p>首先创建一个open.conf作为热点的配置文件：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">interface&#x3D;wlan0</span><br><span class="line">ssid&#x3D;FreeWIFI</span><br><span class="line">driver&#x3D;nl80211</span><br><span class="line">channel&#x3D;1</span><br><span class="line">hw_mode&#x3D;g</span><br></pre></td></tr></table></figure>
-<p>###dnsmasq</p>
-<p>提供DNS和DHCP服务的简易轻量级配置工具</p>
+<h3 id="dnsmasq"><a href="#dnsmasq" class="headerlink" title="dnsmasq"></a>dnsmasq</h3><p>提供DNS和DHCP服务的简易轻量级配置工具</p>
 <p>向/etc/dnsmasq.conf添加一条：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dhcp-range&#x3D;172.5.5.100, 172.5.5.250, 12h</span><br><span class="line">interface&#x3D;wlan0</span><br></pre></td></tr></table></figure>
 
@@ -56,11 +53,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE #转发</span><br></pre></td></tr></table></figure>
 
 <p>这时钓鱼wifi已经可以连接到互联网了，用wireshark等抓包工具对eth0进行抓包。即可抓到连接wifi的客户端的所有流量。</p>
-<p>##driftnet<br>简单的图片捕获工具</p>
+<h2 id="driftnet"><a href="#driftnet" class="headerlink" title="driftnet"></a>driftnet</h2><p>简单的图片捕获工具</p>
 <p>kali安装：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install driftnet</span><br><span class="line">driftnet -i eth0</span><br></pre></td></tr></table></figure>
 <p>经过测试，成功率不是很高。很多图片都抓不到</p>
-<p>##DNS 劫持<br>在本地部署钓鱼网站，无线客户端连接网络时，通过DHCP服务不仅能获得本地的ip地址，还包括DHCP服务指定的DNS解析地址。</p>
+<h2 id="DNS-劫持"><a href="#DNS-劫持" class="headerlink" title="DNS 劫持"></a>DNS 劫持</h2><p>在本地部署钓鱼网站，无线客户端连接网络时，通过DHCP服务不仅能获得本地的ip地址，还包括DHCP服务指定的DNS解析地址。</p>
 <p>先在本地搭建钓鱼网站，以flash为例子：</p>
 <p>通过对DNS服务器进行配置，打开/etc/dnsmasq.conf，添加格式：address=/url/ip</p>
 <p>添加一条：</p>
@@ -68,8 +65,7 @@
 <p>重启dnsmasq即可</p>
 <p><code>systemctl restart dnsmasq</code></p>
 <p>之后连接上wifi之后就可以完成劫持了</p>
-<p>##配置Captive Protal</p>
-<p>连接上免费的wifi后，要求认证。以此方式欺骗得到账号密码。</p>
+<h2 id="配置Captive-Protal"><a href="#配置Captive-Protal" class="headerlink" title="配置Captive Protal"></a>配置Captive Protal</h2><p>连接上免费的wifi后，要求认证。以此方式欺骗得到账号密码。</p>
 <p>以android设备为例子，当设备接入无线网络时，会尝试请求访问client3.google.com/generate_204并根据返回结果来判断网络状况，返回204则表示网络正常，<strong>返回302则表示存在认证</strong>，并以弹窗的方式显示在手机中。</p>
 <p><strong>1.配置iptables</strong></p>
 <p>将所有的流量包丢弃，但是允许DNS查询，及向网关特定端口请求（172.5.5.1的80端口）；</p>
