@@ -39,8 +39,9 @@
 <meta property="og:image" content="http://likesoso.github.io/posts/afba1638/1-10.jpg">
 <meta property="og:image" content="http://likesoso.github.io/posts/afba1638/1-11.png">
 <meta property="og:image" content="http://likesoso.github.io/posts/afba1638/1-12.png">
+<meta property="og:image" content="http://likesoso.github.io/posts/afba1638/1-13.png">
 <meta property="article:published_time" content="2020-10-09T06:48:06.000Z">
-<meta property="article:modified_time" content="2020-10-12T08:11:54.704Z">
+<meta property="article:modified_time" content="2020-10-12T08:58:39.440Z">
 <meta property="article:author" content="likesoso">
 <meta property="article:tag" content="靶机">
 <meta property="article:tag" content="SQL">
@@ -212,7 +213,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-12 16:11:54" itemprop="dateModified" datetime="2020-10-12T16:11:54+08:00">2020-10-12</time>
+                <time title="修改时间：2020-10-12 16:58:39" itemprop="dateModified" datetime="2020-10-12T16:58:39+08:00">2020-10-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -304,7 +305,11 @@
 <p><img src="/posts/afba1638/1-12.png"></p>
 <p>查看源码：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">$uagent = $_SERVER[<span class="string">&#x27;HTTP_USER_AGENT&#x27;</span>];</span><br><span class="line">$IP = $_SERVER[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">&#x27;uname&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>($_POST[<span class="string">&#x27;passwd&#x27;</span>]))</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">	$uname = check_input($_POST[<span class="string">&#x27;uname&#x27;</span>]);</span><br><span class="line">	$passwd = check_input($_POST[<span class="string">&#x27;passwd&#x27;</span>]);</span><br><span class="line">	$sql=<span class="string">&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;</span>;</span><br><span class="line">	$result1 = mysql_query($sql);</span><br><span class="line">	$row1 = mysql_fetch_array($result1);</span><br><span class="line">		<span class="keyword">if</span>($row1)</span><br><span class="line">			&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&#x27;&lt;font color= &quot;#FFFF00&quot; font size = 3 &gt;&#x27;</span>;</span><br><span class="line">			$insert=<span class="string">&quot;INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES (&#x27;$uagent&#x27;, &#x27;$IP&#x27;, $uname)&quot;</span>;</span><br><span class="line">			mysql_query($insert);</span><br><span class="line">			<span class="comment">//echo &#x27;Your IP ADDRESS is: &#x27; .$IP;</span></span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;/font&gt;&quot;</span>;</span><br><span class="line">			<span class="comment">//echo &quot;&lt;br&gt;&quot;;</span></span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&#x27;&lt;font color= &quot;#0000ff&quot; font size = 3 &gt;&#x27;</span>;			</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&#x27;Your User Agent is: &#x27;</span> .$uagent;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;/font&gt;&quot;</span>;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">			print_r(mysql_error());			</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&lt;br&gt;&quot;</span>;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&#x27;&lt;img src=&quot;../images/flag.jpg&quot;  /&gt;&#x27;</span>;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">			</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&#x27;&lt;font color= &quot;#0000ff&quot; font size=&quot;3&quot;&gt;&#x27;</span>;</span><br><span class="line">			<span class="comment">//echo &quot;Try again looser&quot;;</span></span><br><span class="line">			print_r(mysql_error());</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;&quot;</span>;			</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;/br&gt;&quot;</span>;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&#x27;&lt;img src=&quot;../images/slap.jpg&quot;   /&gt;&#x27;</span>;	</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;/font&gt;&quot;</span>;  </span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>不难发现，uname、passwd参数都有check_in()函数过滤，而<span class="math inline">\(ip由REMOTE_ADDR获得，无法控制；那么就只有\)</span>uagent这一个参数可以触发注入了。</p>
+<p>不难发现，uname、passwd参数都有check_in()函数过滤，而$ip由REMOTE_ADDR获得，无法控制；那么就只有$uagent这一个参数可以触发注入了。构造POC：</p>
+<p>判断插入的字段数量：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1&#x27;,&#x27;1&#x27;,&#x27;1&#x27;,&#x27;1&#x27;)<span class="comment">#	//报错。Column count doesn&#x27;t match value count at row 1</span></span><br><span class="line">1&#x27;,&#x27;1&#x27;,&#x27;1&#x27;,)<span class="comment">#		//没有报错</span></span><br></pre></td></tr></table></figure>
+<p><img src="/posts/afba1638/1-13.png"></p>
+<p>确认有insert了三个字段。</p>
 
     </div>
 
@@ -344,7 +349,10 @@
     <a href="/posts/448ee81e/" rel="prev" title="mailsender_faker">
       <i class="fa fa-chevron-left"></i> mailsender_faker
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/posts/ee450295/" rel="next" title="反调试">
+      反调试 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -418,20 +426,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
