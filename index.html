@@ -162,6 +162,168 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://likesoso.github.io/posts/ee450295/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/likesoso.png">
+      <meta itemprop="name" content="likesoso">
+      <meta itemprop="description" content>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="likesoso - 随便写写">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/ee450295/" class="post-title-link" itemprop="url">反调试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-03 10:09:00 / 修改时间：15:23:40" itemprop="dateCreated datePublished" datetime="2020-11-03T10:09:00+08:00">2020-11-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B2%99%E7%9B%92%E5%AF%B9%E6%8A%97/" itemprop="url" rel="index"><span itemprop="name">沙盒对抗</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="对al-khaser的代码分析尝试">对al-khaser的代码分析尝试</h1>
+<p>    结合最近实战中遇到的一些问题，需要对马加一些反沙盒的功能，故对此进行一些研究。限于C++还是拙劣了一些，所以只能说是一次尝试；原始地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/LordNoteworthy/al-khaser">项目地址</a></p>
+<p>    al-khaser是一款c++编写的，拥有多种反调试、代码注入、沙盒检测、人类行为、反虚拟化、反分析、防拆卸、office宏、DLL注入等功能的一款POC程序。通过对他的学习，我们可以增加到自己的代码中，达到更好的效果。运行截图：</p>
+<p><img src="/posts/ee450295/show.png"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/ee450295/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://likesoso.github.io/posts/38a0391b/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/likesoso.png">
+      <meta itemprop="name" content="likesoso">
+      <meta itemprop="description" content>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="likesoso - 随便写写">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/38a0391b/" class="post-title-link" itemprop="url">HW中邮件钓鱼的利用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-29 17:31:34" itemprop="dateCreated datePublished" datetime="2020-10-29T17:31:34+08:00">2020-10-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-03 15:12:17" itemprop="dateModified" datetime="2020-11-03T15:12:17+08:00">2020-11-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%82%AE%E4%BB%B6%E7%A4%BE%E5%B7%A5/" itemprop="url" rel="index"><span itemprop="name">邮件社工</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言">前言</h1>
+<p>多次HW下来，发现一个现象：</p>
+<p>    随着企业对安全投入的增加、传统意义上的攻击流程已经很难在短时间内取得成效。尤其是地方HW时间一般就7到14天。通过web到dmz再渗透内网的周期较长，所以<strong>快速的突破网络边界</strong>，打到内网中去将会在以后的护网中越来越重要、社工不失为一种便捷的攻击手段</p>
+<h1 id="批量发邮">批量发邮</h1>
+<p>我们以microsoft的邮件为模板</p>
+<p><img src="/posts/38a0391b/1.png"></p>
+<p>导出eml文件后删除可以删除的部分。剩下的部分少做修改：</p>
+<p><img src="/posts/38a0391b/2.png"> <img src="/posts/38a0391b/3.png"></p>
+<p>其中subject和from字段最好使用utf-8 编码，实践测试中未使用utf-8的邮件在某些邮件客户端中会显示乱码。 <img src="/posts/38a0391b/4.png"></p>
+<p>然后观察整个邮件原始文件我们只需要控制to字段和data字段即可完成批量发邮件：</p>
+<p>整个demo已经上传<a href></a>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://likesoso.github.io/posts/8d85782f/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -187,7 +349,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-14 10:43:26 / 修改时间：11:00:51" itemprop="dateCreated datePublished" datetime="2020-10-14T10:43:26+08:00">2020-10-14</time>
+              <time title="创建时间：2020-10-14 10:43:26 / 修改时间：11:10:46" itemprop="dateCreated datePublished" datetime="2020-10-14T10:43:26+08:00">2020-10-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -221,90 +383,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/8d85782f/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://likesoso.github.io/posts/ee450295/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/likesoso.png">
-      <meta itemprop="name" content="likesoso">
-      <meta itemprop="description" content>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="likesoso - 随便写写">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/ee450295/" class="post-title-link" itemprop="url">反调试</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-13 10:09:00" itemprop="dateCreated datePublished" datetime="2020-10-13T10:09:00+08:00">2020-10-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-14 10:42:15" itemprop="dateModified" datetime="2020-10-14T10:42:15+08:00">2020-10-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B2%99%E7%9B%92%E5%AF%B9%E6%8A%97/" itemprop="url" rel="index"><span itemprop="name">沙盒对抗</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="对al-khaser的代码分析尝试">对al-khaser的代码分析尝试</h1>
-<p>    结合最近实战中遇到的一些问题，需要对马加一些反沙盒的功能，故对此进行一些研究。限于C++还是拙劣了一些，所以只能说是一次尝试；原始地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/LordNoteworthy/al-khaser">项目地址</a></p>
-<p>    al-khaser是一款c++编写的，拥有多种反调试、代码注入、沙盒检测、人类行为、反虚拟化、反分析、防拆卸、office宏、DLL注入等功能的一款POC程序。通过对他的学习，我们可以增加到自己的代码中，达到更好的效果。运行截图：</p>
-<p><img src="/posts/ee450295/show.png"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/ee450295/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -941,94 +1019,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://likesoso.github.io/posts/f9e0b1be/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/likesoso.png">
-      <meta itemprop="name" content="likesoso">
-      <meta itemprop="description" content>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="likesoso - 随便写写">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/f9e0b1be/" class="post-title-link" itemprop="url">sqli-labs教程(2)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-07 13:40:12" itemprop="dateCreated datePublished" datetime="2020-09-07T13:40:12+08:00">2020-09-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-12 16:10:55" itemprop="dateModified" datetime="2020-10-12T16:10:55+08:00">2020-10-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SQL%E6%B3%A8%E5%85%A5/" itemprop="url" rel="index"><span itemprop="name">SQL注入</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="less5">less5</h1>
-<p>单引号报错： &gt;You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1'' LIMIT 0,1' at line 1</p>
-<p>判断是只有单引号包裹id，尝试构造：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id&#x3D;1 &#39; and 1&#x3D;1 -- - &#x2F;&#x2F;页面正常</span><br><span class="line">?id&#x3D;1 &#39; and 1&#x3D;2 -- - &#x2F;&#x2F;页面不正常</span><br></pre></td></tr></table></figure>
-<p>order by 后得到是3个字段，尝试union select 和报错注入时，发现没有回显位，可供回显</p>
-<figure>
-<img src="/posts/f9e0b1be/2-1.jpg" alt><figcaption>2-1.jpg</figcaption>
-</figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/f9e0b1be/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1099,7 +1089,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1112,7 +1102,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
