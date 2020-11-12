@@ -187,7 +187,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-11-12 14:06:12 / 修改时间：14:23:04" itemprop="dateCreated datePublished" datetime="2020-11-12T14:06:12+08:00">2020-11-12</time>
+              <time title="创建时间：2020-11-12 14:06:12 / 修改时间：14:25:49" itemprop="dateCreated datePublished" datetime="2020-11-12T14:06:12+08:00">2020-11-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -213,14 +213,14 @@
           <h1 id="前言">前言</h1>
 <p>    某次客户需要做现场渗透测试，本想着现场渗透就是接根网线直连内网，一把梭就给他日穿。到了现场后看到资产全是linux的国产化发行版，头痛。域渗透是凉了。。。</p>
 <p>    扫描器启动！扫描到几处漏洞：<strong>X-server未授权</strong>，根据百度利用此漏洞可以获取远程主机桌面截图，以及键盘记录。</p>
-<h1 id="获取截图">获取截图</h1>
-<p>需要使用xwatchwin、skpy、xwd，kali下都有</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xwd -root -screen -silent -display targetip:0 &gt; screenshot.xwd</span><br><span class="line">convert screenshot.xwd screenshot.png</span><br></pre></td></tr></table></figure>
-<h1 id="获取键盘记录">获取键盘记录</h1>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xspy targetip</span><br></pre></td></tr></table></figure>
-<h1 id="效果">效果</h1>
-<p>    结合桌面截图和键盘记录，经过一个小时的等待。终于在管理员输入ssh密码的时候抓取到了密码，使用密码爆破整个c段。成功获得180台机器权限</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/a742282f/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
