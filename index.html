@@ -15,6 +15,17 @@
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
 
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"likesoso.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
@@ -187,7 +198,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-11-12 14:06:12 / 修改时间：14:26:43" itemprop="dateCreated datePublished" datetime="2020-11-12T14:06:12+08:00">2020-11-12</time>
+              <time title="创建时间：2020-11-12 14:06:12 / 修改时间：15:30:27" itemprop="dateCreated datePublished" datetime="2020-11-12T14:06:12+08:00">2020-11-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -210,9 +221,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="前言">前言</h1>
-<p>    某次客户需要做现场渗透测试，本想着现场渗透就是接根网线直连内网，一把梭就给他日穿。到了现场后看到资产全是linux的国产化发行版，头痛。域渗透是凉了。。。</p>
-<p>    扫描器启动！扫描到几处漏洞：<strong>X-server未授权</strong>，根据百度利用此漏洞可以获取远程主机桌面截图，以及键盘记录。</p>
+          x-serve未授权
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/a742282f/#more" rel="contents">
@@ -266,10 +275,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-03 10:09:00 / 修改时间：15:34:35" itemprop="dateCreated datePublished" datetime="2020-11-03T10:09:00+08:00">2020-11-03</time>
+              <time title="创建时间：2020-11-03 10:09:00" itemprop="dateCreated datePublished" datetime="2020-11-03T10:09:00+08:00">2020-11-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-12 15:21:43" itemprop="dateModified" datetime="2020-11-12T15:21:43+08:00">2020-11-12</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -1173,6 +1188,10 @@
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="external nofollow noopener noreferrer" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共14.3k字</span>
+</div>
 
         
 <div class="busuanzi-count">
